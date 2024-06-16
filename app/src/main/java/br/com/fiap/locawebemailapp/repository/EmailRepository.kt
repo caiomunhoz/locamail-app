@@ -1,5 +1,6 @@
 package br.com.fiap.locawebemailapp.repository
 
+import android.location.GnssAntennaInfo.Listener
 import androidx.compose.runtime.mutableStateListOf
 import br.com.fiap.locawebemailapp.model.Email
 import java.time.LocalDate
@@ -38,10 +39,19 @@ object EmailRepository {
         )
     )
 
-    fun listarEmails(): List<Email> = emails
+
+    fun listarEmailsDesc(): List<Email> = emails.sortedByDescending { it.dataEnvio }
+
+    fun listarEmailsAsc(): List<Email> = emails.sortedBy { it.dataEnvio }
+
+    fun listarEmailsFavoritos(): List<Email> = emails.filter { it.favorito }
 
     fun listarEmailPorId(id: String): Email? {
         return emails.find{ it.id == id }
+    }
+
+    fun listarEmailsPorUser(emails: List<Email>, user: String): List<Email> {
+        return emails.filter { it.remetente.startsWith(prefix = user, ignoreCase = true)}
     }
 
     fun deletarEmailPorId(id: String) {
@@ -60,4 +70,6 @@ object EmailRepository {
     fun modificarFavorito(email: Email) {
         email.favorito = !email.favorito
     }
+
+
 }

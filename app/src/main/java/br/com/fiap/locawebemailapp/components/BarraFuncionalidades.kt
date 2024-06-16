@@ -2,6 +2,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -20,10 +21,18 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import br.com.fiap.locawebemailapp.repository.EmailRepository
 
 @Composable
-fun BarraFuncionalidades() {
+fun BarraFuncionalidades(
+    onOrderChange: (Boolean) -> Unit,
+    onFavoriteFilterChange: (Boolean) -> Unit,
+    onSearch: (String) -> Unit
+) {
     var showModal by remember { mutableStateOf(false) }
+    var ascendingOrder by remember { mutableStateOf(false) }
+    var showFavoriteFilter by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
 
     Row(
         modifier = Modifier
@@ -38,56 +47,70 @@ fun BarraFuncionalidades() {
                     )
                 }
             },
-            value = "",
-            onValueChange = {},
-            label = { Text(text = "Pesquisar no email")},
+            value = searchText,
+            onValueChange = {
+                searchText = it
+                onSearch(it)
+            },
+            label = { Text(text = "Pesquisar no email") },
             modifier = Modifier.weight(1f),
             trailingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Pesquisar",
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Pesquisar",
+                )
             }
         )
-
-
     }
-
     if (showModal) {
         AlertDialog(
             containerColor = Color.Black,
-            modifier = Modifier.border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.extraLarge),
+            modifier = Modifier.border(
+                BorderStroke(1.dp, Color.Gray),
+                MaterialTheme.shapes.extraLarge
+            ),
             onDismissRequest = { showModal = false },
-            title = { Text(
-                text ="Configurações de Data",
-                color = Color.White) },
+            title = {
+                Text(
+                    text = "Filtros",
+                    color = Color.White
+                )
+            },
             text = {
                 Column {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text("Data Inicial") }
-                    )
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text("Data Final") }
+                    Button(
+                        onClick = {
+                            ascendingOrder = !ascendingOrder
+                            onOrderChange(ascendingOrder)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
+                            .fillMaxWidth(),
+                        content = {
+                            Text(if (ascendingOrder) "ASC ↑" else "DESC ↓")
+                        }
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
-                            checked = false,
-                            onCheckedChange = { /*TODO*/ }
+                            checked = showFavoriteFilter,
+                            onCheckedChange = {
+                                showFavoriteFilter = it
+                                onFavoriteFilterChange(it)
+                            }
                         )
                         Text(
                             color = Color.White,
                             text = "Favoritos",
                             modifier = Modifier
                                 .alignByBaseline()
-                                .padding(top = 13.dp) // Ajuste o valor de acordo com o espaçamento desejado
+                                .padding(top = 13.dp)
                         )
                     }
                 }
@@ -95,11 +118,14 @@ fun BarraFuncionalidades() {
             confirmButton = {
                 Button(
                     onClick = { showModal = false },
-                    colors = ButtonDefaults.buttonColors( // Configuração das cores do botão
-                        containerColor = Color.Black, // Cor de fundo do botão preto
-                        contentColor = Color.Gray // Cor do texto do botão (cinza)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black,
+                        contentColor = Color.White
                     ),
-                    modifier = Modifier.border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium), // Borda cinza no botão
+                    modifier = Modifier.border(
+                        BorderStroke(1.dp, Color.Gray),
+                        MaterialTheme.shapes.medium
+                    ),
                     content = { Text("OK") }
                 )
             }
