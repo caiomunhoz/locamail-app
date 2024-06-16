@@ -28,7 +28,7 @@ import java.time.LocalDate
 fun NovoEmail(navController: NavController) {
     var assunto by remember { mutableStateOf(TextFieldValue()) }
     var mensagem by remember { mutableStateOf(TextFieldValue()) }
-    var enderecoDestinatario by remember { mutableStateOf(TextFieldValue()) }
+    var emailDestinatario by remember { mutableStateOf(TextFieldValue()) }
 
     Scaffold(
         topBar = {
@@ -42,8 +42,8 @@ fun NovoEmail(navController: NavController) {
                     .fillMaxSize()
             ) {
                 OutlinedTextField(
-                    value = enderecoDestinatario,
-                    onValueChange = { enderecoDestinatario = it },
+                    value = emailDestinatario,
+                    onValueChange = { emailDestinatario = it },
                     label = { Text(text = "Destinatário") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -67,7 +67,8 @@ fun NovoEmail(navController: NavController) {
                         id = "",
                         assunto = assunto.text,
                         mensagem = mensagem.text,
-                        emailRemetente = "usuario.atual@email.com.br",
+                        emailDestinatario = emailDestinatario.text,
+                        emailRemetente = "usuario.atual@email.com",
                         remetente = "Usuário Atual",
                         dataEnvio = LocalDate.now()
                     )

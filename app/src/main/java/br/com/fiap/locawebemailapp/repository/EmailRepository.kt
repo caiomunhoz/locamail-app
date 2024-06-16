@@ -11,6 +11,7 @@ object EmailRepository {
             "Convite para Reunião",
             "Gostaríamos de convidá-lo para a reunião de planejamento do projeto, que ocorrerá na próxima quarta-feira, às 10h, na sala de conferências.\n\nAtenciosamente,\nJoão",
             "ana.silva@email.com",
+            "usuario.atual@email.com",
             "Ana Silva",
             LocalDate.parse("2024-05-02"),
             false
@@ -20,6 +21,7 @@ object EmailRepository {
             "Relatório Mensal",
             "Segue em anexo o relatório mensal das atividades da equipe...",
             "pedro.souza@email.com",
+            "usuario.atual@email.com",
             "Pedro Souza",
             LocalDate.parse("2024-05-04"),
             false
@@ -29,6 +31,7 @@ object EmailRepository {
             "Solicitação de Documentos",
             "Poderia, por favor, enviar a documentação necessária para a renovação do contrato...",
             "mariana.lima@email.com",
+            "usuario.atual@email.com",
             "Mariana Lima",
             LocalDate.parse("2024-05-06"),
             false

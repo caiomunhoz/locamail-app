@@ -7,6 +7,7 @@ data class Email (
     var assunto: String = "",
     var mensagem: String = "",
     var emailRemetente: String = "",
+    var emailDestinatario: String = "",
     var remetente: String = "",
     var dataEnvio: LocalDate,
     var favorito: Boolean = false
