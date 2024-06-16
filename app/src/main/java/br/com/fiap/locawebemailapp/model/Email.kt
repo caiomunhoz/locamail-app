@@ -8,5 +8,6 @@ data class Email (
     var mensagem: String = "",
     var emailRemetente: String = "",
     var remetente: String = "",
-    var dataEnvio: LocalDate
+    var dataEnvio: LocalDate,
+    var favorito: Boolean = false
 )

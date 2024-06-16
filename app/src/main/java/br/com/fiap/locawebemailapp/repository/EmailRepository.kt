@@ -12,7 +12,8 @@ object EmailRepository {
             "Gostaríamos de convidá-lo para a reunião de planejamento do projeto, que ocorrerá na próxima quarta-feira, às 10h, na sala de conferências.\n\nAtenciosamente,\nJoão",
             "ana.silva@email.com",
             "Ana Silva",
-            LocalDate.parse("2024-05-02")
+            LocalDate.parse("2024-05-02"),
+            false
         ),
         Email(
             "1",
@@ -20,7 +21,8 @@ object EmailRepository {
             "Segue em anexo o relatório mensal das atividades da equipe...",
             "pedro.souza@email.com",
             "Pedro Souza",
-            LocalDate.parse("2024-05-04")
+            LocalDate.parse("2024-05-04"),
+            false
         ),
         Email(
             "2",
@@ -28,7 +30,8 @@ object EmailRepository {
             "Poderia, por favor, enviar a documentação necessária para a renovação do contrato...",
             "mariana.lima@email.com",
             "Mariana Lima",
-            LocalDate.parse("2024-05-06")
+            LocalDate.parse("2024-05-06"),
+            false
         )
     )
 
@@ -47,6 +50,11 @@ object EmailRepository {
     fun criarEmail(email: Email) {
         val ultimoEmail = emails.lastOrNull()
         email.id = ((ultimoEmail?.id?.toInt() ?: (0 + 1))).toString()
+        email.favorito = false
         emails.add(email)
+    }
+
+    fun modificarFavorito(email: Email) {
+        email.favorito = !email.favorito
     }
 }

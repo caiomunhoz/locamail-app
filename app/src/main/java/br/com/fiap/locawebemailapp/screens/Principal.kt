@@ -15,7 +15,6 @@ import br.com.fiap.locawebemailapp.components.BarraFuncionalidades
 import br.com.fiap.locawebemailapp.components.BarraNavegacao
 import br.com.fiap.locawebemailapp.components.EmailCard
 import br.com.fiap.locawebemailapp.model.Email
-import kotlin.math.log
 
 @Composable
 fun Principal(navController: NavController, emails: List<Email>) {
