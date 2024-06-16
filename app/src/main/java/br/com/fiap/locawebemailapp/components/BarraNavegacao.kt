@@ -1,5 +1,6 @@
 package br.com.fiap.locawebemailapp.components
 
+import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 
 @Composable
@@ -29,11 +31,8 @@ fun BarraNavegacao(navController: NavController) {
         Icons.Filled.DateRange,
         Icons.Filled.Add
     )
-    val cores = listOf(
-        Color.Gray,
-        Color.Gray,
-        Color.Gray
-    )
+    val context = LocalContext.current
+
     NavigationBar(
         containerColor = Color.Black
     ) {
@@ -43,10 +42,10 @@ fun BarraNavegacao(navController: NavController) {
                     Icon(
                         icones[index],
                         contentDescription = item,
-                        tint = cores[index]
+                        tint = Color.Gray
                     )
-                }, // Define a cor do ícone
-                label = { Text(text = item, color = cores[index]) }, // Define a cor do texto
+                },
+                label = { Text(text = item, color = Color.Gray) },
                 selected = itemSelecionado == index,
                 onClick = {
                     itemSelecionado = index
@@ -58,7 +57,10 @@ fun BarraNavegacao(navController: NavController) {
                         }
 
                         1 -> {
-                            //Calendário
+                            val intent = Intent(Intent.ACTION_MAIN).apply {
+                                addCategory(Intent.CATEGORY_APP_CALENDAR)
+                            }
+                            context.startActivity(intent)
                         }
 
                         2 -> {
