@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,10 +43,13 @@ fun BarraNavegacao(navController: NavController) {
                     Icon(
                         icones[index],
                         contentDescription = item,
-                        tint = Color.Gray
+                        tint = Color.White
                     )
                 },
-                label = { Text(text = item, color = Color.Gray) },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.DarkGray
+                ),
+                label = { Text(text = item, color = Color.White) },
                 selected = itemSelecionado == index,
                 onClick = {
                     itemSelecionado = index

@@ -36,9 +36,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun Preview() {
-//    Principal(emails = listarEmailsMockados().sortedByDescending { it.dataEnvio })
-//}

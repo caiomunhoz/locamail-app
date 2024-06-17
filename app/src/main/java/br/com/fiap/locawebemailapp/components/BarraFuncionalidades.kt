@@ -19,16 +19,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import br.com.fiap.locawebemailapp.repository.EmailRepository
-
 @Composable
 fun BarraFuncionalidades(
     onOrderChange: (Boolean) -> Unit,
     onFavoriteFilterChange: (Boolean) -> Unit,
     onSearch: (String) -> Unit
 ) {
+    //val emailRepository = EmailRepository(LocalContext.current)
+
     var showModal by remember { mutableStateOf(false) }
     var ascendingOrder by remember { mutableStateOf(false) }
     var showFavoriteFilter by remember { mutableStateOf(false) }
@@ -39,6 +40,10 @@ fun BarraFuncionalidades(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         OutlinedTextField(
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White,
+            ),
             leadingIcon = {
                 IconButton(onClick = { showModal = true }) {
                     Icon(

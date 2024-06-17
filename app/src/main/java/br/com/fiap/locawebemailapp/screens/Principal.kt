@@ -1,6 +1,8 @@
 package br.com.fiap.locawebemailapp.screens
 
 import BarraFuncionalidades
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,28 +18,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import br.com.fiap.locawebemailapp.components.BarraNavegacao
 import br.com.fiap.locawebemailapp.components.EmailCard
-import br.com.fiap.locawebemailapp.repository.EmailRepository
+import br.com.fiap.locawebemailapp.database.repository.EmailRepository
+import br.com.fiap.locawebemailapp.model.mock.emailsMockados
 
 @Composable
 fun Principal(
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val emailRepository = EmailRepository(context)
+
+    LaunchedEffect(Unit) {
+        if (isFirstRun(context)) {
+            val emailsMockados = emailsMockados()
+            emailRepository.salvarMultiplos(emailsMockados)
+        }
+    }
+
     var ordemAscendente by remember { mutableStateOf(false) }
     var favoritos by remember { mutableStateOf(false) }
-    var searchText by remember {mutableStateOf("")}
-    var emails by remember { mutableStateOf(EmailRepository.listarEmailsDesc()) }
+    var searchText by remember { mutableStateOf("") }
+    var emails by remember { mutableStateOf(emailRepository.listarEmailsDesc()) }
 
     fun atualizarEmails() {
         emails = when {
-            favoritos -> EmailRepository.listarEmailsFavoritos()
-            ordemAscendente -> EmailRepository.listarEmailsAsc()
-            else -> EmailRepository.listarEmailsDesc()
+            favoritos -> emailRepository.listarFavoritos()
+            ordemAscendente -> emailRepository.listarEmailsAsc()
+            else -> emailRepository.listarEmailsDesc()
         }
-        if(searchText.isNotBlank()) {
-            emails = EmailRepository.listarEmailsPorUser(emails, searchText)
+        if (searchText.isNotBlank()) {
+            emails = emailRepository.listarPorBusca(searchText)
         }
     }
 
@@ -70,13 +84,24 @@ fun Principal(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    items(emails) {
+                    items(emails) { email ->
                         Column {
-                            EmailCard(navController, it)
+                            EmailCard(navController, email) {
+                                atualizarEmails()
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+fun isFirstRun(context: Context): Boolean {
+    val prefs: SharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val isFirstRun = prefs.getBoolean("isFirstRun", true)
+    if (isFirstRun) {
+        prefs.edit().putBoolean("isFirstRun", false).apply()
+    }
+    return isFirstRun
 }
