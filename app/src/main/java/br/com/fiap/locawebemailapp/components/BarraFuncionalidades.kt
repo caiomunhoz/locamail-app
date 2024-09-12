@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -19,16 +20,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import br.com.fiap.locawebemailapp.repository.EmailRepository
 
 @Composable
 fun BarraFuncionalidades(
     onOrderChange: (Boolean) -> Unit,
     onFavoriteFilterChange: (Boolean) -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
 ) {
+    //val emailRepository = EmailRepository(LocalContext.current)
+
     var showModal by remember { mutableStateOf(false) }
     var ascendingOrder by remember { mutableStateOf(false) }
     var showFavoriteFilter by remember { mutableStateOf(false) }
@@ -43,7 +49,7 @@ fun BarraFuncionalidades(
                 IconButton(onClick = { showModal = true }) {
                     Icon(
                         imageVector = Icons.Filled.Menu,
-                        contentDescription = "Teste",
+                        contentDescription = "Menu",
                     )
                 }
             },
@@ -64,7 +70,6 @@ fun BarraFuncionalidades(
     }
     if (showModal) {
         AlertDialog(
-            containerColor = Color.Black,
             modifier = Modifier.border(
                 BorderStroke(1.dp, Color.Gray),
                 MaterialTheme.shapes.extraLarge
@@ -72,8 +77,7 @@ fun BarraFuncionalidades(
             onDismissRequest = { showModal = false },
             title = {
                 Text(
-                    text = "Filtros",
-                    color = Color.White
+                    text = "Configurações"
                 )
             },
             text = {
@@ -83,14 +87,10 @@ fun BarraFuncionalidades(
                             ascendingOrder = !ascendingOrder
                             onOrderChange(ascendingOrder)
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black,
-                            contentColor = Color.White
-                        ),
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
                             .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
                         content = {
                             Text(if (ascendingOrder) "ASC ↑" else "DESC ↓")
                         }
@@ -106,26 +106,30 @@ fun BarraFuncionalidades(
                             }
                         )
                         Text(
-                            color = Color.White,
                             text = "Favoritos",
                             modifier = Modifier
                                 .alignByBaseline()
                                 .padding(top = 13.dp)
                         )
                     }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Switch(
+                            checked = isDarkTheme,
+                            onCheckedChange = { onThemeChange(it) }
+                        )
+                        Text("Tema Escuro")
+                    }
                 }
             },
             confirmButton = {
                 Button(
                     onClick = { showModal = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.border(
-                        BorderStroke(1.dp, Color.Gray),
-                        MaterialTheme.shapes.medium
-                    ),
+//                    modifier = Modifier.border(
+//                        MaterialTheme.shapes.medium
+//                    ),
+                    shape = RoundedCornerShape(16.dp),
                     content = { Text("OK") }
                 )
             }

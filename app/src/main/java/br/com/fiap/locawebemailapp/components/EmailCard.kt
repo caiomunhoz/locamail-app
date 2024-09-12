@@ -30,37 +30,44 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import br.com.fiap.locawebemailapp.database.repository.EmailRepository
 import br.com.fiap.locawebemailapp.model.Email
-import br.com.fiap.locawebemailapp.repository.EmailRepository
 import br.com.fiap.locawebemailapp.ui.theme.Black
 import br.com.fiap.locawebemailapp.ui.theme.Grey
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun EmailCard(navController: NavController, email: Email) {
+fun EmailCard(
+    navController: NavController,
+    email: Email,
+    isDarkTheme: Boolean,
+    onDeleteEmail: () -> Unit
+) {
+    val emailRepository = EmailRepository(LocalContext.current)
+    val emailQuery = emailRepository.buscarEmailPorId(1)
+
     var favoritado by remember {
-        mutableStateOf(false)
+        mutableStateOf(email.favorito)
     }
     var openDialogConfirmarDelete by remember {
         mutableStateOf(false)
     }
 
+    val nomeDisplay: String
+    val emailDisplay: String
 
-    val autor = email.emailRemetente != "usuario.atual@email.com"
-    var nomeDisplay = ""
-    var emailDisplay = ""
-
-    if (autor) {
+    if (email.emailRemetente != "usuario.atual@email.com") {
         nomeDisplay = email.remetente
         emailDisplay = email.emailRemetente
     } else {
         nomeDisplay = "Para: ${email.emailDestinatario}"
-        emailDisplay = "Enviado por vocÃª"
+        emailDisplay = "Enviado por você"
     }
 
     Card(
@@ -68,10 +75,7 @@ fun EmailCard(navController: NavController, email: Email) {
             .padding(4.dp)
             .clickable(onClick = {
                 navController.navigate("email/${email.id}")
-            }), border = BorderStroke(2.dp, Grey), colors = CardDefaults.cardColors(
-            contentColor = Color.White,
-            containerColor = Black,
-        )
+            })
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -86,12 +90,11 @@ fun EmailCard(navController: NavController, email: Email) {
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = email.dataEnvio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                    color = Color.Gray
+                    text = email.dataEnvio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 )
             }
             Text(
-                text = emailDisplay, color = Color.Gray
+                text = emailDisplay
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -112,7 +115,8 @@ fun EmailCard(navController: NavController, email: Email) {
                     IconButton(
                         onClick = {
                             favoritado = !favoritado
-                            EmailRepository.modificarFavorito(email)
+                            email.favorito = !email.favorito
+                            emailRepository.modificarFavorito(email)
                         }, modifier = Modifier.border(
                             width = 2.dp,
                             color = Color.Transparent,
@@ -121,7 +125,13 @@ fun EmailCard(navController: NavController, email: Email) {
                         Icon(
                             imageVector = Icons.Outlined.Star,
                             contentDescription = "Favoritar",
-                            tint = if (favoritado) Color.White else Color.Gray
+                            tint = if (!favoritado){
+                                Color.Gray
+                            } else if (isDarkTheme){
+                                Color.White
+                            } else {
+                                Color.Yellow
+                            }
                         )
                     }
                     IconButton(onClick = { openDialogConfirmarDelete = true }) {
@@ -142,37 +152,29 @@ fun EmailCard(navController: NavController, email: Email) {
             },
             modifier = Modifier
                 .padding(top = 8.dp)
-                .border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
+                //.border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(200.dp),
             confirmButton = {
-                Button(onClick = {
-                    EmailRepository.deletarEmailPorId(email.id)
-                    openDialogConfirmarDelete = false
-                },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White),
-                    modifier = Modifier
-                        .border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
+                Button(
+                    onClick = {
+                        emailRepository.deletar(email)
+                        openDialogConfirmarDelete = false
+                        onDeleteEmail()
+                    }
                 ) {
                     Text(text = "Confirmar")
                 }
             },
             dismissButton = {
-                Button(onClick = { openDialogConfirmarDelete = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)){
+                Button(
+                    onClick = { openDialogConfirmarDelete = false },
+                ) {
                     Text(text = "Cancelar")
                 }
             },
-            title = { Text(text = "Deletar email" , color = Color.White, )},
-            text = { Text(text = "Deseja realmente deletar o email?" , color = Color.White,)  },
-            containerColor = Color.Black,
+            title = { Text(text = "Deletar email") },
+            text = { Text(text = "Deseja realmente deletar o email?") },
             shape = RoundedCornerShape(15.dp),
         )
     }

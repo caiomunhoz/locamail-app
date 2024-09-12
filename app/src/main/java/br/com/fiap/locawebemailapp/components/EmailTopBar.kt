@@ -23,29 +23,21 @@ import androidx.compose.ui.unit.dp
 fun EmailTopBar(navController: NavController) {
     Box {
         TopAppBar(
-            title = { Text(text = "", color = Color.White) },
+            title = { Text(text = "") },
             navigationIcon = {
                 IconButton(onClick = { navController.navigate("principal") }) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.Gray)
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Voltar")
                 }
             },
-            colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Black,
-                titleContentColor = Color.White,
-                navigationIconContentColor = Color.White
-            ),
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Gray divider below TopAppBar
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height = 1.dp)
-                .align(alignment = Alignment.BottomStart),
-            color = Color.Gray
+                .align(alignment = Alignment.BottomStart)
         ) {
-            // Optional: You can add padding or other content inside the Surface if needed
+
         }
     }
 }

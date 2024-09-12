@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,19 +34,16 @@ fun BarraNavegacao(navController: NavController) {
     )
     val context = LocalContext.current
 
-    NavigationBar(
-        containerColor = Color.Black
-    ) {
+    NavigationBar {
         itens.forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {
                     Icon(
                         icones[index],
-                        contentDescription = item,
-                        tint = Color.Gray
+                        contentDescription = item
                     )
                 },
-                label = { Text(text = item, color = Color.Gray) },
+                label = { Text(text = item) },
                 selected = itemSelecionado == index,
                 onClick = {
                     itemSelecionado = index
