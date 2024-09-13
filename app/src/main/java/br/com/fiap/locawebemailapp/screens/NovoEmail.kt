@@ -29,7 +29,14 @@ import androidx.navigation.NavController
 import br.com.fiap.locawebemailapp.components.EmailTopBar
 import br.com.fiap.locawebemailapp.database.repository.EmailRepository
 import br.com.fiap.locawebemailapp.model.Email
+import br.com.fiap.locawebemailapp.model.EmailDb
+import br.com.fiap.locawebemailapp.service.RetrofitFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun NovoEmail(navController: NavController) {
@@ -38,6 +45,30 @@ fun NovoEmail(navController: NavController) {
     var assunto by remember { mutableStateOf(TextFieldValue()) }
     var mensagem by remember { mutableStateOf(TextFieldValue()) }
     var emailDestinatario by remember { mutableStateOf(TextFieldValue()) }
+
+    fun salvarEmailDb(email: Email) {
+        val data = "${email.dataEnvio} + T00:00:00.000Z"
+        val emailDb = EmailDb(
+            assunto = email.assunto,
+            mensagem = email.mensagem,
+            emailRemetente = email.emailRemetente,
+            emailDestinatario = email.emailDestinatario,
+            remetente = email.remetente,
+            dataEnvio = data,
+            favorito = email.favorito
+        )
+        val call = RetrofitFactory().getEmailService().enviarEmail(emailDb)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) println("Email salvo no BD") else println("Erro ao salvar no BD")
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                println(t)
+            }
+
+        })
+    }
 
     Scaffold(
         topBar = {
@@ -81,6 +112,7 @@ fun NovoEmail(navController: NavController) {
                             remetente = "Usuário Atual",
                             dataEnvio = LocalDate.now()
                         )
+                        salvarEmailDb(novoEmail)
                         emailRepository.salvar(novoEmail)
                         navController.navigate("principal")
                     },

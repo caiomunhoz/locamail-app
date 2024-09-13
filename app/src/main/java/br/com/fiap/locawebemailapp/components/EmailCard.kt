@@ -1,5 +1,6 @@
 package br.com.fiap.locawebemailapp.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,9 +39,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.locawebemailapp.database.repository.EmailRepository
 import br.com.fiap.locawebemailapp.model.Email
+import br.com.fiap.locawebemailapp.model.EmailDb
+import br.com.fiap.locawebemailapp.service.RetrofitFactory
 import br.com.fiap.locawebemailapp.ui.theme.Black
 import br.com.fiap.locawebemailapp.ui.theme.Grey
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.format.DateTimeFormatter
+import kotlin.math.log
 
 @Composable
 fun EmailCard(
@@ -50,7 +57,6 @@ fun EmailCard(
     onDeleteEmail: () -> Unit
 ) {
     val emailRepository = EmailRepository(LocalContext.current)
-    val emailQuery = emailRepository.buscarEmailPorId(1)
 
     var favoritado by remember {
         mutableStateOf(email.favorito)
@@ -68,6 +74,42 @@ fun EmailCard(
     } else {
         nomeDisplay = "Para: ${email.emailDestinatario}"
         emailDisplay = "Enviado por você"
+    }
+
+    fun deletarEmailDb(id: Long) {
+        RetrofitFactory().getEmailService().deletarEmail(id).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) println("Email deletado no DB") else println("Erro ao deletar email no DB")
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                println(t)
+            }
+        })
+    }
+
+    fun atualizarFavoritoDb(email: Email) {
+        val data = "${email.dataEnvio} + T00:00:00.000Z"
+        val emailDb = EmailDb(
+            assunto = email.assunto,
+            mensagem = email.mensagem,
+            emailRemetente = email.emailRemetente,
+            emailDestinatario = email.emailDestinatario,
+            remetente = email.remetente,
+            dataEnvio = data,
+            favorito = email.favorito
+        )
+        RetrofitFactory().getEmailService().atualizarFavorito(emailDb)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) println("Favorito atualizado") else println("Erro ao atualizar favorito")
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    println(t)
+                }
+            })
+
     }
 
     Card(
@@ -116,6 +158,7 @@ fun EmailCard(
                         onClick = {
                             favoritado = !favoritado
                             email.favorito = !email.favorito
+                            atualizarFavoritoDb(email)
                             emailRepository.modificarFavorito(email)
                         }, modifier = Modifier.border(
                             width = 2.dp,
@@ -125,9 +168,9 @@ fun EmailCard(
                         Icon(
                             imageVector = Icons.Outlined.Star,
                             contentDescription = "Favoritar",
-                            tint = if (!favoritado){
+                            tint = if (!favoritado) {
                                 Color.Gray
-                            } else if (isDarkTheme){
+                            } else if (isDarkTheme) {
                                 Color.White
                             } else {
                                 Color.Yellow
@@ -152,12 +195,12 @@ fun EmailCard(
             },
             modifier = Modifier
                 .padding(top = 8.dp)
-                //.border(BorderStroke(1.dp, Color.Gray), MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(200.dp),
             confirmButton = {
                 Button(
                     onClick = {
+                        deletarEmailDb(email.id)
                         emailRepository.deletar(email)
                         openDialogConfirmarDelete = false
                         onDeleteEmail()
