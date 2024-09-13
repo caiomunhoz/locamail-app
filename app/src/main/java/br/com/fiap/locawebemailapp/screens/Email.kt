@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.fiap.locawebemailapp.components.EmailTopBar
 import br.com.fiap.locawebemailapp.database.repository.EmailRepository
-import br.com.fiap.locawebemailapp.model.Email
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
