@@ -1,7 +1,5 @@
 package br.com.fiap.locawebemailapp.components
 
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +15,9 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,13 +36,10 @@ import br.com.fiap.locawebemailapp.database.repository.EmailRepository
 import br.com.fiap.locawebemailapp.model.Email
 import br.com.fiap.locawebemailapp.model.EmailDb
 import br.com.fiap.locawebemailapp.service.RetrofitFactory
-import br.com.fiap.locawebemailapp.ui.theme.Black
-import br.com.fiap.locawebemailapp.ui.theme.Grey
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.format.DateTimeFormatter
-import kotlin.math.log
 
 @Composable
 fun EmailCard(

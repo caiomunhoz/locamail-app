@@ -21,4 +21,7 @@ interface EmailService {
 
     @PUT("Email/UpdateEmail")
     fun atualizarFavorito(@Body emailDb: EmailDb): Call<Void>
+
+    @PUT("")
+    fun atualizarTema(@Path("isDarkTheme") isDarkTheme: Boolean): Call<Void>
 }

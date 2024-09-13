@@ -17,12 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import br.com.fiap.locawebemailapp.service.RetrofitFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun BarraFuncionalidades(
@@ -123,7 +126,24 @@ fun BarraFuncionalidades(
             confirmButton = {
                 Button(
                     shape = RoundedCornerShape(16.dp),
-                    onClick = { showModal = false },
+                    onClick = {
+                        showModal = false
+                        RetrofitFactory().getEmailService().atualizarTema(isDarkTheme)
+                            .enqueue(object : Callback<Void> {
+                                override fun onResponse(
+                                    call: Call<Void>,
+                                    response: Response<Void>
+                                ) {
+                                    if (response.isSuccessful) println("Tema atualizado") else println(
+                                        "Erro ao atualizar tema"
+                                    )
+                                }
+
+                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    println(t)
+                                }
+                            })
+                    },
                     content = { Text("OK") }
                 )
             }
